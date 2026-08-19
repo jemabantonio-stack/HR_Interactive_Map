@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hog Ranch Drillhole Dashboard</title>
@@ -358,16 +357,20 @@
       box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
     }
 
-    .drillpad-action-dot.retain {
+    .drillpad-action-dot.built {
       background: #5CB85C;
     }
 
-    .drillpad-action-dot.remove {
-      background: #E74C3C;
+    .drillpad-action-dot.building {
+      background: #3498DB;
     }
 
-    .drillpad-action-dot.add {
-      background: #3498DB;
+    .drillpad-action-dot.old-pending-approval {
+      background: #E67E22;
+    }
+
+    .drillpad-action-dot.new {
+      background: #F1C40F;
     }
 
     .status-chip {
@@ -1195,9 +1198,10 @@
         <div id="drillpadActionLegend" class="drillpad-action-legend details-panel" aria-label="Drillpad action color legend">
           <p class="drillpad-action-legend-title">Drillpad Action Colors</p>
           <div class="drillpad-action-legend-items">
-            <span class="drillpad-action-legend-item"><span class="drillpad-action-dot retain"></span>Retain</span>
-            <span class="drillpad-action-legend-item"><span class="drillpad-action-dot remove"></span>Remove</span>
-            <span class="drillpad-action-legend-item"><span class="drillpad-action-dot add"></span>Add</span>
+            <span class="drillpad-action-legend-item"><span class="drillpad-action-dot built"></span>Built</span>
+            <span class="drillpad-action-legend-item"><span class="drillpad-action-dot building"></span>Building</span>
+            <span class="drillpad-action-legend-item"><span class="drillpad-action-dot old-pending-approval"></span>Old - Pending Approval</span>
+            <span class="drillpad-action-legend-item"><span class="drillpad-action-dot new"></span>New</span>
           </div>
         </div>
       </div>
@@ -1536,15 +1540,24 @@
     }
 
     const drillpadActionColors = {
-      retain: '#5CB85C',
-      remove: '#E74C3C',
-      add: '#3498DB',
+      'built': '#5CB85C',
+      'building': '#3498DB',
+      'old - pending approval': '#E67E22',
+      'new': '#F1C40F',
     };
+
+    function normalizeDrillpadAction(rawAction) {
+      return String(rawAction ?? '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s*-\s*/g, ' - ')
+        .replace(/\s+/g, ' ');
+    }
 
     function getDrillpadActionColor(feature) {
       const properties = feature?.properties || {};
       const rawAction = properties.Action ?? properties.action ?? properties.ACTION ?? '';
-      const normalized = String(rawAction).trim().toLowerCase();
+      const normalized = normalizeDrillpadAction(rawAction);
       return drillpadActionColors[normalized] || '#7FDBFF';
     }
 
@@ -1956,51 +1969,59 @@
         const features = (loadedShapeGeoJson && Array.isArray(loadedShapeGeoJson.features)) ? loadedShapeGeoJson.features : [];
         if (!features.length) {
           statusPieChart.style.background = 'conic-gradient(#6B7280 0deg 0deg, #A0A678 0deg 360deg)';
-          statusSummaryContent.innerHTML = '<div class="panel-note">Load a drillpad shapefile to view Retain, Remove, and Add totals.</div>';
+          statusSummaryContent.innerHTML = '<div class="panel-note">Load a drillpad shapefile to view Built, Building, Old - Pending Approval, and New totals.</div>';
           return;
         }
 
-        const tally = { retain: 0, remove: 0, add: 0, other: 0 };
+        const tally = { built: 0, building: 0, pending: 0, new: 0, other: 0 };
         features.forEach((feature) => {
           const rawAction = feature?.properties?.Action ?? feature?.properties?.action ?? feature?.properties?.ACTION ?? '';
-          const normalized = String(rawAction).trim().toLowerCase();
-          if (normalized === 'retain') tally.retain += 1;
-          else if (normalized === 'remove') tally.remove += 1;
-          else if (normalized === 'add') tally.add += 1;
+          const normalized = normalizeDrillpadAction(rawAction);
+          if (normalized === 'built') tally.built += 1;
+          else if (normalized === 'building') tally.building += 1;
+          else if (normalized === 'old - pending approval') tally.pending += 1;
+          else if (normalized === 'new') tally.new += 1;
           else tally.other += 1;
         });
 
-        const total = tally.retain + tally.remove + tally.add + tally.other;
+        const total = tally.built + tally.building + tally.pending + tally.new + tally.other;
         if (!total) {
           statusPieChart.style.background = 'conic-gradient(#6B7280 0deg 0deg, #A0A678 0deg 360deg)';
           statusSummaryContent.innerHTML = '<div class="panel-note">No drillpad Action values were found in the loaded shapefile.</div>';
           return;
         }
 
-        const retainAngle = (tally.retain / total) * 360;
-        const removeAngle = ((tally.retain + tally.remove) / total) * 360;
-        const addAngle = ((tally.retain + tally.remove + tally.add) / total) * 360;
-        const retainPct = Math.round((tally.retain / total) * 100);
-        const removePct = Math.round((tally.remove / total) * 100);
-        const addPct = Math.round((tally.add / total) * 100);
-        const otherPct = 100 - retainPct - removePct - addPct;
+        const builtAngle = (tally.built / total) * 360;
+        const buildingAngle = ((tally.built + tally.building) / total) * 360;
+        const pendingAngle = ((tally.built + tally.building + tally.pending) / total) * 360;
+        const newAngle = ((tally.built + tally.building + tally.pending + tally.new) / total) * 360;
+        const builtPct = Math.round((tally.built / total) * 100);
+        const buildingPct = Math.round((tally.building / total) * 100);
+        const pendingPct = Math.round((tally.pending / total) * 100);
+        const newPct = Math.round((tally.new / total) * 100);
+        const otherPct = 100 - builtPct - buildingPct - pendingPct - newPct;
 
-        statusPieChart.style.background = `conic-gradient(#5CB85C 0deg ${retainAngle}deg, #E74C3C ${retainAngle}deg ${removeAngle}deg, #3498DB ${removeAngle}deg ${addAngle}deg, #6B7280 ${addAngle}deg 360deg)`;
+        statusPieChart.style.background = `conic-gradient(#5CB85C 0deg ${builtAngle}deg, #3498DB ${builtAngle}deg ${buildingAngle}deg, #E67E22 ${buildingAngle}deg ${pendingAngle}deg, #F1C40F ${pendingAngle}deg ${newAngle}deg, #6B7280 ${newAngle}deg 360deg)`;
         statusSummaryContent.innerHTML = `
           <div class="status-summary-item">
-            <span class="status-summary-label"><span class="status-dot" style="background:#5CB85C"></span>Retain</span>
-            <strong class="status-summary-count">${tally.retain}</strong>
-            <span class="status-summary-pct">(${retainPct}%)</span>
+            <span class="status-summary-label"><span class="status-dot" style="background:#5CB85C"></span>Built</span>
+            <strong class="status-summary-count">${tally.built}</strong>
+            <span class="status-summary-pct">(${builtPct}%)</span>
           </div>
           <div class="status-summary-item">
-            <span class="status-summary-label"><span class="status-dot" style="background:#E74C3C"></span>Remove</span>
-            <strong class="status-summary-count">${tally.remove}</strong>
-            <span class="status-summary-pct">(${removePct}%)</span>
+            <span class="status-summary-label"><span class="status-dot" style="background:#3498DB"></span>Building</span>
+            <strong class="status-summary-count">${tally.building}</strong>
+            <span class="status-summary-pct">(${buildingPct}%)</span>
           </div>
           <div class="status-summary-item">
-            <span class="status-summary-label"><span class="status-dot" style="background:#3498DB"></span>Add</span>
-            <strong class="status-summary-count">${tally.add}</strong>
-            <span class="status-summary-pct">(${addPct}%)</span>
+            <span class="status-summary-label"><span class="status-dot" style="background:#E67E22"></span>Old - Pending Approval</span>
+            <strong class="status-summary-count">${tally.pending}</strong>
+            <span class="status-summary-pct">(${pendingPct}%)</span>
+          </div>
+          <div class="status-summary-item">
+            <span class="status-summary-label"><span class="status-dot" style="background:#F1C40F"></span>New</span>
+            <strong class="status-summary-count">${tally.new}</strong>
+            <span class="status-summary-pct">(${newPct}%)</span>
           </div>
           ${tally.other ? `<div class="status-summary-item"><span class="status-summary-label"><span class="status-dot" style="background:#6B7280"></span>Other</span><strong class="status-summary-count">${tally.other}</strong><span class="status-summary-pct">(${otherPct}%)</span></div>` : ''}
         `;
