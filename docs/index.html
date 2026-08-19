@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hog Ranch Drillhole Dashboard</title>
@@ -1197,7 +1196,7 @@
           <button class="details-tab" type="button" data-tab="drillpad">Drillpad Details</button>
         </div>
         <div id="drillpadActionLegend" class="drillpad-action-legend details-panel" aria-label="Drillpad action color legend">
-          <p class="drillpad-action-legend-title">Drillpad Action Colors</p>
+          <p class="drillpad-action-legend-title">Drillpad Status Colors</p>
           <div class="drillpad-action-legend-items">
             <span class="drillpad-action-legend-item"><span class="drillpad-action-dot built"></span>Built</span>
             <span class="drillpad-action-legend-item"><span class="drillpad-action-dot building"></span>Building</span>
@@ -1557,7 +1556,7 @@
 
     function getDrillpadActionColor(feature) {
       const properties = feature?.properties || {};
-      const rawAction = properties.Action ?? properties.action ?? properties.ACTION ?? '';
+      const rawAction = properties.Status ?? properties.status ?? properties.STATUS ?? properties.Action ?? properties.action ?? properties.ACTION ?? '';
       const normalized = normalizeDrillpadAction(rawAction);
       return drillpadActionColors[normalized] || '#7FDBFF';
     }
@@ -1976,7 +1975,7 @@
 
         const tally = { built: 0, building: 0, pending: 0, new: 0, other: 0 };
         features.forEach((feature) => {
-          const rawAction = feature?.properties?.Action ?? feature?.properties?.action ?? feature?.properties?.ACTION ?? '';
+          const rawAction = feature?.properties?.Status ?? feature?.properties?.status ?? feature?.properties?.STATUS ?? feature?.properties?.Action ?? feature?.properties?.action ?? feature?.properties?.ACTION ?? '';
           const normalized = normalizeDrillpadAction(rawAction);
           if (normalized === 'built') tally.built += 1;
           else if (normalized === 'building') tally.building += 1;
