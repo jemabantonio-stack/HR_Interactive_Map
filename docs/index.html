@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hog Ranch Drillhole Dashboard</title>
@@ -669,6 +668,11 @@
       font-size: 0.98rem;
     }
 
+    #drillholeLegends {
+      display: grid;
+      gap: 12px;
+    }
+
     .legend {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -892,21 +896,34 @@
 
     .status-summary-item {
       display: grid;
-      grid-template-columns: minmax(84px, 1fr) minmax(26px, auto) minmax(52px, auto);
-      gap: 8px;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      column-gap: 8px;
+      align-items: start;
       font-size: 0.94rem;
-      align-items: center;
     }
 
     .status-summary-label {
+      grid-row: 1;
+      grid-column: 1;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       color: #dfe7ff;
     }
 
+    .status-summary-count {
+      grid-row: 1;
+      grid-column: 2;
+    }
+
+    .status-summary-pct {
+      grid-row: 1;
+      grid-column: 3;
+    }
+
     .status-summary-count,
     .status-summary-pct {
+      justify-self: end;
       text-align: right;
       font-variant-numeric: tabular-nums;
     }
@@ -1174,15 +1191,17 @@
           <button class="status-pill" type="button" data-status="active">Active</button>
           <button class="status-pill" type="button" data-status="planned">Planned</button>
         </div>
-        <div class="legend">
-          <div class="legend-item"><span class="legend-dot dot-active"></span>Active</div>
-          <div class="legend-item"><span class="legend-dot dot-planned"></span>Planned</div>
-          <div class="legend-item"><span class="legend-dot dot-completed"></span>Completed</div>
-        </div>
-        <div class="legend" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
-          <div class="legend-item"><span class="legend-shape is-round"></span>RC</div>
-          <div class="legend-item"><span class="legend-shape is-square"></span>DD</div>
-          <div class="legend-item"><span class="legend-shape is-rounded-square"></span>Planned</div>
+        <div id="drillholeLegends">
+          <div class="legend">
+            <div class="legend-item"><span class="legend-dot dot-active"></span>Active</div>
+            <div class="legend-item"><span class="legend-dot dot-planned"></span>Planned</div>
+            <div class="legend-item"><span class="legend-dot dot-completed"></span>Completed</div>
+          </div>
+          <div class="legend" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+            <div class="legend-item"><span class="legend-shape is-round"></span>RC</div>
+            <div class="legend-item"><span class="legend-shape is-square"></span>DD</div>
+            <div class="legend-item"><span class="legend-shape is-rounded-square"></span>Planned</div>
+          </div>
         </div>
       </div>
       <div class="sidebar-card">
@@ -1231,6 +1250,7 @@
     const statusSummaryContent = document.getElementById('statusSummaryContent');
     const drillholeStatusGroups = document.getElementById('drillholeStatusGroups');
     const drillpadStatusGroup = document.getElementById('drillpadStatusGroup');
+    const drillholeLegends = document.getElementById('drillholeLegends');
     const statusPieChartRC = document.getElementById('statusPieChartRC');
     const statusSummaryContentRC = document.getElementById('statusSummaryContentRC');
     const statusPieChartDD = document.getElementById('statusPieChartDD');
@@ -1903,6 +1923,8 @@
       if (currentDetailsTab === 'drillpad') {
         if (drillholeStatusGroups) drillholeStatusGroups.style.display = 'none';
         if (drillpadStatusGroup) drillpadStatusGroup.style.display = '';
+        if (drillholeLegends) drillholeLegends.style.display = 'none';
+        if (statusFilterControls) statusFilterControls.style.display = 'none';
         const features = (loadedShapeGeoJson && Array.isArray(loadedShapeGeoJson.features)) ? loadedShapeGeoJson.features : [];
         if (!features.length) {
           statusPieChart.style.background = 'conic-gradient(#6B7280 0deg 0deg, #A0A678 0deg 360deg)';
@@ -1967,6 +1989,8 @@
 
       if (drillpadStatusGroup) drillpadStatusGroup.style.display = 'none';
       if (drillholeStatusGroups) drillholeStatusGroups.style.display = '';
+      if (drillholeLegends) drillholeLegends.style.display = '';
+      if (statusFilterControls) statusFilterControls.style.display = '';
 
       const points = drillholePoints || [];
       const rcPoints = points.filter((point) => point.category === 'RC');
@@ -2591,7 +2615,7 @@
         Object.keys(properties).forEach((key) => {
           const rowEl = document.createElement('div');
           rowEl.className = 'detail-row';
-          rowEl.innerHTML = `<strong>${formatDisplayLabel(key)}</strong><span>${formatValue(properties[key])}</span>`;
+          rowEl.innerHTML = `<strong>${formatDrillpadFieldLabel(key)}</strong><span>${formatValue(properties[key])}</span>`;
           padCard.appendChild(rowEl);
         });
       } else {
@@ -2815,6 +2839,17 @@
         .replace(/\s+/g, ' ')
         .toLowerCase()
         .replace(/\b\w/g, (character) => character.toUpperCase());
+    }
+
+    const drillpadTruncatedFieldLabels = {
+      'ground typ': 'Ground Type',
+      'slope feas': 'Slope Feasibility',
+      'feasibilit': 'Feasibility',
+    };
+
+    function formatDrillpadFieldLabel(key) {
+      const displayLabel = formatDisplayLabel(key);
+      return drillpadTruncatedFieldLabels[displayLabel.toLowerCase()] || displayLabel;
     }
 
     function buildActualTargetRecord(row) {
@@ -3302,7 +3337,7 @@
         Object.keys(shapefileProperties).forEach((key) => {
           const rowEl = document.createElement('div');
           rowEl.className = 'detail-row';
-          rowEl.innerHTML = `<strong>${formatDisplayLabel(key)}</strong><span>${formatValue(shapefileProperties[key])}</span>`;
+          rowEl.innerHTML = `<strong>${formatDrillpadFieldLabel(key)}</strong><span>${formatValue(shapefileProperties[key])}</span>`;
           padCard.appendChild(rowEl);
         });
       } else {
