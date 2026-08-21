@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hog Ranch Drillhole Dashboard</title>
@@ -337,10 +336,8 @@
     }
 
     .drillpad-action-legend-items {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 14px;
-      align-items: center;
+      display: grid;
+      gap: 8px;
     }
 
     .drillpad-action-legend-item {
@@ -477,6 +474,21 @@
       color: rgba(255, 255, 255, 0.82);
       font-size: 0.85rem;
       line-height: 1.25;
+    }
+
+    .depth-summary-card {
+      gap: 6px;
+    }
+
+    .depth-summary-rows {
+      display: grid;
+      gap: 2px;
+    }
+
+    .depth-summary-row {
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: transparent;
     }
 
     .detail-row strong {
@@ -639,7 +651,7 @@
       gap: 10px;
     }
 
-    .plan-actual .metric-divider {
+    .metric-divider {
       display: block;
       height: 1px;
       margin: 2px 0;
@@ -664,6 +676,110 @@
       line-height: 1.4;
     }
 
+    .data-availability-note {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(160, 166, 120, 0.08);
+      border: 1px solid rgba(160, 166, 120, 0.22);
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
+    .assay-coverage-note {
+      margin-top: 16px;
+      border-radius: 14px;
+      background: rgba(160, 166, 120, 0.16);
+      border: 1px solid rgba(160, 166, 120, 0.4);
+      color: #f5f8ff;
+      overflow: hidden;
+    }
+
+    .assay-coverage-note strong {
+      color: #A0A678;
+      font-size: 1.05rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .assay-coverage-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .assay-coverage-toggle:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .assay-coverage-text {
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .assay-coverage-arrow {
+      flex: 0 0 auto;
+      font-size: 0.85rem;
+      color: #A0A678;
+      transition: transform 0.2s ease;
+    }
+
+    .assay-coverage-note.is-expanded .assay-coverage-arrow {
+      transform: rotate(90deg);
+    }
+
+    .assay-coverage-list {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      margin: 0 12px 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .assay-coverage-note.is-expanded .assay-coverage-list {
+      display: flex;
+    }
+
+    .assay-coverage-hole {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255, 255, 255, 0.05);
+      color: #f5f8ff;
+      font: inherit;
+      font-size: 0.85rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .assay-coverage-hole:hover {
+      background: rgba(160, 166, 120, 0.28);
+    }
+
+    .assay-coverage-hole-count {
+      flex: 0 0 auto;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 0.78rem;
+      font-variant-numeric: tabular-nums;
+    }
+
     #messages {
       color: rgba(255, 255, 255, 0.68);
       font-size: 0.98rem;
@@ -678,11 +794,12 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
-      padding: 14px 16px;
-      border-radius: 18px;
-      background: rgba(11, 52, 70, 0.16);
-      border: 1px solid rgba(67, 51, 28, 0.25);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+      padding: 12px 4px;
+    }
+
+    #drillholeLegends .legend:not(:first-child) {
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .status-filter {
@@ -832,16 +949,12 @@
       grid-template-columns: auto 1fr;
       gap: 12px;
       align-items: center;
-      padding: 14px 16px;
-      border-radius: 18px;
-      background: rgba(11, 52, 70, 0.12);
-      border: 1px solid rgba(67, 51, 28, 0.25);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+      padding: 10px 4px;
     }
 
     #drillholeStatusGroups {
       display: grid;
-      gap: 8px;
+      gap: 6px;
     }
 
     .status-subheading {
@@ -853,15 +966,16 @@
       margin: 4px 2px -2px;
     }
 
+    #drillholeStatusGroups .status-subheading:not(:first-child) {
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
     .status-total-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
-      border-radius: 18px;
-      background: rgba(11, 52, 70, 0.12);
-      border: 1px solid rgba(67, 51, 28, 0.25);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+      padding: 10px 4px;
       font-size: 0.94rem;
     }
 
@@ -878,7 +992,7 @@
       border-radius: 50%;
       position: relative;
       background: conic-gradient(#43331C 0deg 0deg, #A0A678 0deg 360deg);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24), inset 0 0 0 7px rgba(255,255,255,0.06);
+      box-shadow: inset 0 0 0 7px rgba(255,255,255,0.06);
     }
 
     .status-pie::after {
@@ -1151,6 +1265,13 @@
           <button class="details-tab" type="button" data-top-tab="geology">Geology</button>
           <button class="details-tab" type="button" data-top-tab="assay">Assay</button>
         </div>
+        <div class="assay-coverage-note" id="assayCoverageNote" style="display:none;">
+          <button type="button" class="assay-coverage-toggle" id="assayCoverageToggle">
+            <span class="assay-coverage-text" id="assayCoverageText"></span>
+            <span class="assay-coverage-arrow" aria-hidden="true">▸</span>
+          </button>
+          <div class="assay-coverage-list" id="assayCoverageList"></div>
+        </div>
         <div id="drillpadActionLegend" class="drillpad-action-legend details-panel" aria-label="Drillpad action color legend">
           <p class="drillpad-action-legend-title">Drillpad Status Colors</p>
           <div class="drillpad-action-legend-items">
@@ -1169,7 +1290,7 @@
             <div id="statusPieChartRC" class="status-pie"></div>
             <div id="statusSummaryContentRC" class="status-summary-list"></div>
           </div>
-          <div class="status-subheading">DD</div>
+          <div class="status-subheading">Core</div>
           <div class="status-summary">
             <div id="statusPieChartDD" class="status-pie"></div>
             <div id="statusSummaryContentDD" class="status-summary-list"></div>
@@ -1200,7 +1321,7 @@
           </div>
           <div class="legend" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
             <div class="legend-item"><span class="legend-shape is-round"></span>RC</div>
-            <div class="legend-item"><span class="legend-shape is-square"></span>DD</div>
+            <div class="legend-item"><span class="legend-shape is-square"></span>Core</div>
             <div class="legend-item"><span class="legend-shape is-rounded-square"></span>Planned</div>
           </div>
         </div>
@@ -1235,6 +1356,10 @@
     const applyCrsButton = document.getElementById('applyCrsButton');
     const detailsPanel = document.getElementById('details');
     const topLevelTabs = document.getElementById('topLevelTabs');
+    const assayCoverageNote = document.getElementById('assayCoverageNote');
+    const assayCoverageToggle = document.getElementById('assayCoverageToggle');
+    const assayCoverageText = document.getElementById('assayCoverageText');
+    const assayCoverageList = document.getElementById('assayCoverageList');
     const detailsTabs = document.getElementById('detailsTabs');
     const drillpadActionLegend = document.getElementById('drillpadActionLegend');
     const messages = document.getElementById('messages');
@@ -2050,6 +2175,51 @@
       }
     }
 
+    function findPeakAuKey(siRows) {
+      return (siRows || []).reduce((foundKey, siRow) => {
+        if (foundKey) return foundKey;
+        return Object.keys(siRow || {}).find((key) => String(key).toLowerCase().includes('peak au g/t')) || null;
+      }, null);
+    }
+
+    function countSignificantIntercepts(siRows) {
+      if (!Array.isArray(siRows) || !siRows.length) return 0;
+      const peakAuKey = findPeakAuKey(siRows);
+      return peakAuKey
+        ? siRows.filter((siRow) => String(siRow[peakAuKey] ?? '').trim() !== '').length
+        : siRows.length;
+    }
+
+    function updateAssayCoverageNote() {
+      if (!assayCoverageNote) return;
+      if (currentDetailsTab !== 'drillhole' || currentTopLevelTab !== 'assay' || !Array.isArray(drillholePoints) || !drillholePoints.length) {
+        assayCoverageNote.style.display = 'none';
+        return;
+      }
+      const total = drillholePoints.length;
+      const holesWithAssay = drillholePoints
+        .filter((point) => Array.isArray(siDataMap[point.drillholeId]) && siDataMap[point.drillholeId].length > 0)
+        .sort((a, b) => String(a.drillholeLabel).localeCompare(String(b.drillholeLabel), undefined, { numeric: true }));
+
+      assayCoverageText.innerHTML = `<strong>${holesWithAssay.length} of ${total}</strong> drillholes have available assay data.`;
+
+      if (holesWithAssay.length) {
+        assayCoverageList.innerHTML = holesWithAssay.map((point) => {
+          const count = countSignificantIntercepts(siDataMap[point.drillholeId]);
+          return `
+            <button type="button" class="assay-coverage-hole" data-drillhole-id="${point.id}">
+              <span>${formatValue(point.drillholeLabel)}</span>
+              <span class="assay-coverage-hole-count">${count} intercept${count === 1 ? '' : 's'}</span>
+            </button>
+          `;
+        }).join('');
+      } else {
+        assayCoverageList.innerHTML = '';
+      }
+
+      assayCoverageNote.style.display = 'block';
+    }
+
     function renderTopLevelEmptyState() {
       const messagesByTab = {
         geology: 'Click a point on the map or choose a drillhole to view geology records for that drillhole.',
@@ -2092,6 +2262,7 @@
             ? tabButton.dataset.topTab === 'general'
             : tabButton.dataset.topTab === currentTopLevelTab);
       });
+      updateAssayCoverageNote();
       updateStatusSummary();
       if (currentDetailsTab === 'drillpad' && currentSelectedDrillpadFeature) {
         syncSelectedDrillpadLayer(currentSelectedDrillpadFeature);
@@ -2120,6 +2291,7 @@
       topLevelTabs.querySelectorAll('.details-tab').forEach((tabButton) => {
         tabButton.classList.toggle('is-active', tabButton.dataset.topTab === currentTopLevelTab);
       });
+      updateAssayCoverageNote();
       if (currentTopLevelTab === 'geology') {
         syncGeologyFromWorkbook();
       }
@@ -2172,33 +2344,33 @@
       return allDates;
     }
 
-    function buildDepthSummaryCard(label, completedDepths) {
+    function buildDepthSummarySection(label, completedDepths) {
       const body = completedDepths.length ? (() => {
         const totalMeterage = completedDepths.reduce((sum, depth) => sum + depth, 0);
         const minimumDepth = Math.min(...completedDepths);
         const maximumDepth = Math.max(...completedDepths);
         const averageDepth = totalMeterage / completedDepths.length;
         return `
-          <div class="detail-row">
-            <strong>Completed Depth Total</strong><span>${totalMeterage.toFixed(2)}</span>
-          </div>
-          <div class="detail-row">
-            <strong>Minimum Depth</strong><span>${minimumDepth.toFixed(2)}</span>
-          </div>
-          <div class="detail-row">
-            <strong>Maximum Depth</strong><span>${maximumDepth.toFixed(2)}</span>
-          </div>
-          <div class="detail-row">
-            <strong>Average Depth</strong><span>${averageDepth.toFixed(2)}</span>
+          <div class="depth-summary-rows">
+            <div class="detail-row depth-summary-row">
+              <strong>Completed Depth Total</strong><span>${totalMeterage.toFixed(2)}</span>
+            </div>
+            <div class="detail-row depth-summary-row">
+              <strong>Minimum Depth</strong><span>${minimumDepth.toFixed(2)}</span>
+            </div>
+            <div class="detail-row depth-summary-row">
+              <strong>Maximum Depth</strong><span>${maximumDepth.toFixed(2)}</span>
+            </div>
+            <div class="detail-row depth-summary-row">
+              <strong>Average Depth</strong><span>${averageDepth.toFixed(2)}</span>
+            </div>
           </div>
         `;
       })() : '<div class="panel-note">No completed drillholes with actual depth values were found.</div>';
 
       return `
-        <div class="detail-card">
-          <div class="status-subheading">${label}</div>
-          ${body}
-        </div>
+        <div class="status-subheading">${label}</div>
+        ${body}
       `;
     }
 
@@ -2243,13 +2415,16 @@
         : '';
 
       const geometryDateNote = lastFootageDataDisplay
-        ? `<div class="panel-note">Data available through ${lastFootageDataDisplay}</div>`
+        ? `<div class="data-availability-note">Data available through ${lastFootageDataDisplay}</div>`
         : '<div class="panel-note">No footage data available</div>';
 
       const summaryCard = `
         ${geometryDateNote}
-        ${buildDepthSummaryCard('RC (in ft)', getCompletedActualDepthValues('RC', selectedDailyTotalsDate))}
-        ${buildDepthSummaryCard('DD (in ft)', getCompletedActualDepthValues('DD', selectedDailyTotalsDate))}
+        <div class="detail-card depth-summary-card">
+          ${buildDepthSummarySection('RC (in ft)', getCompletedActualDepthValues('RC', selectedDailyTotalsDate))}
+          <div class="metric-divider" aria-hidden="true"></div>
+          ${buildDepthSummarySection('Core (in ft)', getCompletedActualDepthValues('DD', selectedDailyTotalsDate))}
+        </div>
       `;
 
       const totalFootageCard = footageDateOptions.length ? `
@@ -3386,9 +3561,11 @@
           assayCard.className = 'detail-card';
 
           if (siRows.length) {
+            const significantInterceptsCount = countSignificantIntercepts(siRows);
+
             const siHeader = document.createElement('div');
             siHeader.className = 'detail-row';
-            siHeader.innerHTML = '<strong>Significant Intercepts</strong><span>' + siRows.length + '</span>';
+            siHeader.innerHTML = '<strong>Significant Intercepts</strong><span>' + significantInterceptsCount + '</span>';
             assayCard.appendChild(siHeader);
 
             const siNote = document.createElement('div');
@@ -3457,8 +3634,9 @@
 
               siKeys.forEach((key) => {
                 const td = document.createElement('td');
-                const numericValue = parseNumber(siRow[key]);
-                td.textContent = Number.isNaN(numericValue) ? formatValue(siRow[key]) : formatNumeric(numericValue, 2);
+                const rawValue = siRow[key];
+                const isPureNumber = typeof rawValue === 'number' || /^-?\d+(\.\d+)?$/.test(String(rawValue ?? '').trim());
+                td.textContent = isPureNumber ? formatNumeric(rawValue, 2) : formatValue(rawValue);
                 rowEl.appendChild(td);
               });
 
@@ -3583,6 +3761,11 @@
           <div><strong>Actual Total Depth (from field)</strong><span>${actualTotalDepthValue}</span></div>
         `;
         selectedDetails.appendChild(panel);
+
+        const surveySectionDivider = document.createElement('div');
+        surveySectionDivider.className = 'metric-divider';
+        surveySectionDivider.setAttribute('aria-hidden', 'true');
+        selectedDetails.appendChild(surveySectionDivider);
 
         const surveyRecordsForCount = point.actualRecords || actualRecordsData[normalizedDrillholeId] || [];
         const surveyCount = surveyRecordsForCount.length;
@@ -3748,6 +3931,7 @@
       addDrillholeMarkers(loadedRows);
       updateStatusSummary();
       syncGeologyFromWorkbook();
+      updateAssayCoverageNote();
     }
 
     function processActualDepths(rows) {
@@ -3889,6 +4073,24 @@
         zoomToDrillhole(point);
       }
     });
+
+    if (assayCoverageToggle) {
+      assayCoverageToggle.addEventListener('click', () => {
+        assayCoverageNote.classList.toggle('is-expanded');
+      });
+    }
+
+    if (assayCoverageList) {
+      assayCoverageList.addEventListener('click', (event) => {
+        const holeButton = event.target.closest('.assay-coverage-hole');
+        if (!holeButton) return;
+        const point = drillholePoints.find((item) => item.id === holeButton.dataset.drillholeId);
+        if (point) {
+          drillholeSelect.value = point.id;
+          zoomToDrillhole(point);
+        }
+      });
+    }
 
     initMap();
     updateStatusSummary();
