@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hog Ranch Drillhole Dashboard</title>
@@ -905,7 +904,7 @@
       height: 14px;
       min-width: 14px;
       flex: 0 0 14px;
-      background: rgba(160, 166, 120, 0.55);
+      background: transparent;
       border: 2px solid #ffffff;
       box-sizing: border-box;
       display: block;
@@ -1770,15 +1769,15 @@
           const geometryType = feature?.geometry?.type || '';
           if (geometryType.includes('Polygon')) {
             return {
-              color: '#F6C85F',
+              color: '#FFFFFF',
               weight: 2,
               opacity: 0.95,
-              fillColor: '#F6C85F',
+              fillColor: '#FFFFFF',
               fillOpacity: 0.08,
             };
           }
           return {
-            color: '#F6C85F',
+            color: '#FFFFFF',
             weight: 2,
             opacity: 0.95,
           };
@@ -1786,9 +1785,9 @@
         pointToLayer: (_feature, latlng) => {
           return L.circleMarker(latlng, {
             radius: 4,
-            color: '#F6C85F',
+            color: '#FFFFFF',
             weight: 2,
-            fillColor: '#F6C85F',
+            fillColor: '#FFFFFF',
             fillOpacity: 0.35,
           });
         },
@@ -3571,7 +3570,7 @@
 
             const siNote = document.createElement('div');
             siNote.className = 'panel-note';
-            siNote.textContent = `Significant assay intercepts for hole ${drillholeName} reported at a cut-off grade of ≥ 0.15 g/t Au`;
+            siNote.textContent = `Significant assay intercepts for hole ${drillholeName} reported at a cut-off grade of ≥ 0.15 g/t Au with a maximum internal dilution of 5 ft`;
             assayCard.appendChild(siNote);
 
             const siKeys = Array.from(new Set(
@@ -3637,7 +3636,9 @@
                 const td = document.createElement('td');
                 const rawValue = siRow[key];
                 const isPureNumber = typeof rawValue === 'number' || /^-?\d+(\.\d+)?$/.test(String(rawValue ?? '').trim());
-                td.textContent = isPureNumber ? formatNumeric(rawValue, 2) : formatValue(rawValue);
+                const normalizedKey = String(key || '').trim().toLowerCase();
+                const decimals = normalizedKey === 'from (ft)' || normalizedKey === 'to (ft)' ? 0 : 2;
+                td.textContent = isPureNumber ? formatNumeric(rawValue, decimals) : formatValue(rawValue);
                 rowEl.appendChild(td);
               });
 
