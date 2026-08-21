@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hog Ranch Drillhole Dashboard</title>
@@ -3638,7 +3637,7 @@
                 const rawValue = siRow[key];
                 const isPureNumber = typeof rawValue === 'number' || /^-?\d+(\.\d+)?$/.test(String(rawValue ?? '').trim());
                 const normalizedKey = String(key || '').trim().toLowerCase();
-                const decimals = normalizedKey === 'from (ft)' || normalizedKey === 'to (ft)' ? 0 : 2;
+                const decimals = ['from (ft)', 'to (ft)', 'interval (ft)'].includes(normalizedKey) ? 0 : 2;
                 td.textContent = isPureNumber ? formatNumeric(rawValue, decimals) : formatValue(rawValue);
                 rowEl.appendChild(td);
               });
